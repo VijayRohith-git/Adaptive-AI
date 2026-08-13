@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Adaptive UI AI Demo</title>
+  <title>Adaptive UI </title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header>
-    <h1 id="title">Adaptive UI — AI Demo</h1>
+    <h1 id="title">Adaptive UI </h1>
     <div id="controls">
       <button id="themeToggle">Toggle Theme</button>
       <button id="increaseText">A+</button>
@@ -18,11 +18,12 @@
   </header>
   <main>
     <article id="content">
-      <h2>Adaptive behavior demonstration</h2>
-      <p id="intro">Interact with this page to see adaptive changes. The page records simple signals (clicks, time on page) and adjusts text size, contrast, and layout density based on inferred preferences.</p>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.</p>
-      <p>Suspendisse potenti. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh.</p>
-      <p>Use the controls above or simply read and browse; the system will adapt.</p>
+      <h2>Adaptive interface demonstration</h2>
+      <p id="intro">This shows how the interface adapts to simple usage signals. The page collects only basic, local signals such as clicks and time on page to adjust presentation (for example: text size, contrast, and spacing) to match inferred reading preferences.</p>
+      <p>The system adapts in real time: frequent clicks on larger text will bias the layout toward increased font size; longer reading sessions with few interactions will favor calmer contrast and more comfortable line lengths. These adjustments are computed locally in your browser and applied immediately so you can feel the differences as you interact.</p>
+      <p>Controls at the top let you override automatic adjustments: toggle the site theme, increase or decrease text size, or reset to defaults. Use these controls to explore combinations of settings and to test how the adaptive system responds.</p>
+      <p>If you are testing, try reading a paragraph for a while, then click the text-size controls several times. Watch the status box for the recorded signals and the interface response.</p>
+      <p><strong>Privacy note:</strong> This stores signals only in the browser (no external tracking). The recorded data is used solely to adjust the UI during the current session.</p>
     </article>
     <aside id="status">
       <h3>Status</h3>
@@ -32,6 +33,14 @@
         <li>Inferred preference: <span id="preference">None</span></li>
       </ul>
     </aside>
+    <section id="notesPanel">
+      <h3>Project notes</h3>
+      <div>
+        <button id="loadNotesBtn">Load Project Notes</button>
+        <button id="saveNotesLocalBtn">Save Notes Locally</button>
+      </div>
+      <pre id="notesContent" aria-live="polite" style="white-space:pre-wrap; background:var(--bg); color:var(--fg); padding:12px; border-radius:6px; max-height:320px; overflow:auto;">No project notes loaded.</pre>
+    </section>
   </main>
   <script src="app.js"></script>
 </body>

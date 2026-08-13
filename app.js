@@ -1,4 +1,4 @@
-// Lightweight adaptive UI demo
+// Lightweight Adaptive UI
 const state = {
   clicks: 0,
   seconds: 0,
@@ -7,11 +7,11 @@ const state = {
   theme: 'light'
 };
 
-const clickCountEl = document.getElementById('clickCount');
-const secondsEl = document.getElementById('seconds');
-const preferenceEl = document.getElementById('preference');
-const contentEl = document.getElementById('content');
-const body = document.body;
+let clickCountEl;
+let secondsEl;
+let preferenceEl;
+let contentEl;
+let body;
 
 // Load persisted state
 function loadState(){
@@ -26,10 +26,10 @@ function saveState(){
 }
 
 function applyState(){
-  clickCountEl.textContent = state.clicks;
-  secondsEl.textContent = state.seconds;
-  preferenceEl.textContent = state.preference || 'None';
-  body.style.fontSize = `${state.textSize}rem`;
+  if(clickCountEl) clickCountEl.textContent = state.clicks;
+  if(secondsEl) secondsEl.textContent = state.seconds;
+  if(preferenceEl) preferenceEl.textContent = state.preference || 'None';
+  if(body) body.style.fontSize = `${state.textSize}rem`;
   if(state.theme==='dark'){
     document.documentElement.style.setProperty('--bg','#0b0b0b');
     document.documentElement.style.setProperty('--fg','#f6f6f6');
@@ -39,7 +39,7 @@ function applyState(){
   }
 }
 
-// Simple heuristic-based inference acting as a transparent "AI"
+// Simple heuristic-based inference acting as a transparent, rule-based model
 function inferPreference(){
   // If user clicks a lot, maybe they want simplified/compact UI
   if(state.clicks>10) return 'compact';
@@ -70,36 +70,85 @@ function adapt(){
   saveState();
 }
 
-// Interactions
-document.getElementById('themeToggle').addEventListener('click',()=>{
-  state.theme = state.theme==='light' ? 'dark' : 'light';
-  adapt();
-});
-document.getElementById('increaseText').addEventListener('click',()=>{
-  state.textSize = Math.min(1.75, state.textSize + 0.1);
-  state.preference = 'large-text';
-  adapt();
-});
-document.getElementById('decreaseText').addEventListener('click',()=>{
-  state.textSize = Math.max(0.75, state.textSize - 0.1);
-  adapt();
-});
-document.getElementById('reset').addEventListener('click',()=>{
-  localStorage.removeItem('adaptiveState');
-  state.clicks=0;state.seconds=0;state.preference=null;state.textSize=1;state.theme='light';
+// Project notes loader: fetch `PROJECT_NOTES.md` and render into the notes panel.
+async function loadProjectNotes(){
+  const out = document.getElementById('notesContent');
+  if(!out) return;
+  out.textContent = 'Loading...';
+  try{
+    const res = await fetch('PROJECT_NOTES.md');
+    if(!res.ok) throw new Error(res.statusText || 'Fetch failed');
+    const text = await res.text();
+    out.textContent = text;
+    try{ localStorage.setItem('PROJECT_NOTES', text); }catch(e){/* ignore storage errors */}
+  }catch(e){
+    out.textContent = 'Error loading project notes: ' + e.message;
+  }
+}
+
+function saveNotesToLocal(){
+  const out = document.getElementById('notesContent');
+  if(!out) return;
+  try{
+    localStorage.setItem('PROJECT_NOTES', out.textContent);
+    out.textContent = 'Project notes saved to local storage.';
+    setTimeout(()=>{
+      // Re-display content after brief confirmation
+      out.textContent = localStorage.getItem('PROJECT_NOTES') || '';
+    },800);
+  }catch(e){
+    out.textContent = 'Error saving notes locally: ' + e.message;
+  }
+}
+
+// Attach UI bindings after DOM is ready so buttons reliably work
+document.addEventListener('DOMContentLoaded', ()=>{
+  // DOM element references
+  clickCountEl = document.getElementById('clickCount');
+  secondsEl = document.getElementById('seconds');
+  preferenceEl = document.getElementById('preference');
+  contentEl = document.getElementById('content');
+  body = document.body;
+
+  // Control buttons
+  const themeBtn = document.getElementById('themeToggle');
+  const incBtn = document.getElementById('increaseText');
+  const decBtn = document.getElementById('decreaseText');
+  const resetBtn = document.getElementById('reset');
+  if(themeBtn) themeBtn.addEventListener('click', ()=>{ state.theme = state.theme==='light' ? 'dark' : 'light'; adapt(); });
+  if(incBtn) incBtn.addEventListener('click', ()=>{ state.textSize = Math.min(1.75, state.textSize + 0.1); state.preference = 'large-text'; adapt(); });
+  if(decBtn) decBtn.addEventListener('click', ()=>{ state.textSize = Math.max(0.75, state.textSize - 0.1); adapt(); });
+  if(resetBtn) resetBtn.addEventListener('click', ()=>{ localStorage.removeItem('adaptiveState'); state.clicks=0;state.seconds=0;state.preference=null;state.textSize=1;state.theme='light'; applyState(); saveState(); });
+
+  // Notes panel buttons
+  const loadBtn = document.getElementById('loadNotesBtn');
+  if(loadBtn) loadBtn.addEventListener('click', loadProjectNotes);
+  const saveBtn = document.getElementById('saveNotesLocalBtn');
+  if(saveBtn) saveBtn.addEventListener('click', saveNotesToLocal);
+  // Try to load project notes from file; if that fails, fall back to any saved local copy
+  loadProjectNotes().catch(()=>{
+    const saved = localStorage.getItem('PROJECT_NOTES');
+    if(saved){
+      const out = document.getElementById('notesContent');
+      if(out) out.textContent = saved;
+    }
+  });
+
+  // Count clicks on page (ignore clicks on the notes load/save to avoid double actions)
+  document.addEventListener('click', (e)=>{
+    // do not count clicks on control buttons
+    const ignored = ['loadNotesBtn','saveNotesLocalBtn','themeToggle','increaseText','decreaseText','reset'];
+    if(e.target && ignored.includes(e.target.id)) return;
+    state.clicks +=1; applyState(); saveState(); adapt();
+  });
+
+  // Track time on page
+  setInterval(()=>{
+    state.seconds +=1; applyState(); if(state.seconds%5===0){ adapt(); }
+    saveState();
+  },1000);
+
+  // Finally, load persisted state and apply it
+  loadState();
   applyState();
 });
-
-// Count clicks on page
-document.addEventListener('click', (e)=>{
-  state.clicks +=1;applyState();saveState();adapt();
-});
-
-// Track time on page
-setInterval(()=>{
-  state.seconds +=1;applyState();if(state.seconds%5===0){adapt();}
-  saveState();
-},1000);
-
-loadState();
-applyState();
