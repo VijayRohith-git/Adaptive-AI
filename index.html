@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Adaptive UI AI Demo</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1 id="title">Adaptive UI — AI Demo</h1>
+    <div id="controls">
+      <button id="themeToggle">Toggle Theme</button>
+      <button id="increaseText">A+</button>
+      <button id="decreaseText">A-</button>
+      <button id="reset">Reset</button>
+    </div>
+  </header>
+  <main>
+    <article id="content">
+      <h2>Adaptive behavior demonstration</h2>
+      <p id="intro">Interact with this page to see adaptive changes. The page records simple signals (clicks, time on page) and adjusts text size, contrast, and layout density based on inferred preferences.</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.</p>
+      <p>Suspendisse potenti. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh.</p>
+      <p>Use the controls above or simply read and browse; the system will adapt.</p>
+    </article>
+    <aside id="status">
+      <h3>Status</h3>
+      <ul>
+        <li>Clicks: <span id="clickCount">0</span></li>
+        <li>Seconds on page: <span id="seconds">0</span></li>
+        <li>Inferred preference: <span id="preference">None</span></li>
+      </ul>
+    </aside>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

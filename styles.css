@@ -1,0 +1,19 @@
+:root{
+  --bg: #ffffff;
+  --fg: #111111;
+  --accent: #0b63ff;
+}
+body{
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: var(--fg);
+  background: var(--bg);
+  margin: 0;
+}
+header{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid #eee}
+#controls button{margin-left:8px}
+main{display:flex;gap:24px;padding:24px}
+article{flex:1}
+aside{width:240px;border-left:1px solid #eee;padding-left:16px}
+.large-text{font-size:1.25rem}
+.high-contrast{background:#000;color:#fff}
+.compact-layout article p{line-height:1.1}
